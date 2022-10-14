@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/codemonkey/StudioProjects/HellsAudioPlayer2/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
+        <entry key="..\:/Users/codemonkey/StudioProjects/HellsAudioPlayer2/app/src/main/res/drawable/ic_wait.xml" value="0.1" />
         <entry key="..\:/Users/codemonkey/StudioProjects/HellsAudioPlayer2/app/src/main/res/layout/activity_main.xml" value="0.22327898550724637" />
         <entry key="..\:/Users/codemonkey/StudioProjects/HellsAudioPlayer2/app/src/main/res/layout/fragment_song_list.xml" value="0.16979166666666667" />
         <entry key="..\:/Users/codemonkey/StudioProjects/HellsAudioPlayer2/app/src/main/res/layout/li_song.xml" value="0.1265625" />

@@ -4,9 +4,9 @@ import android.content.pm.PackageManager
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
-import kotlinx.coroutines.MainScope;
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 
 /**
@@ -14,11 +14,11 @@ import kotlinx.coroutines.launch
  *
  * The object must be created during activity initialization
  */
-class PermRequestWrapper (
-    activity: FragmentActivity,
+class ActivityPermRequestWrapper(
+    activity: AppCompatActivity,
     callback: ActivityResultCallback<Boolean>
-) {
-    private val _activity: FragmentActivity = activity
+){
+    private val _activity: AppCompatActivity = activity
     private val _callback: ActivityResultCallback<Boolean> = callback
 
     private val _launcher: ActivityResultLauncher<String> =
