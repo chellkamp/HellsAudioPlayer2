@@ -3,23 +3,22 @@ package com.hellscode.hellsaudioplayer.catalog
 import android.content.Context
 import android.database.Cursor
 import android.provider.MediaStore
-import androidx.databinding.ObservableArrayList
-import androidx.databinding.ObservableList
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class LocalCatalog @Inject constructor(@ApplicationContext context: Context) {
 
     companion object {
+
         private val queryProjection: Array<String> = arrayOf(
             MediaStore.Audio.Media._ID,
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ARTIST,
             MediaStore.Audio.Media.ALBUM,
-            MediaStore.Audio.Media.DATA
-        )
+            MediaStore.Audio.Albums.ALBUM_ID,
+            MediaStore.Audio.Media.DATA)
 
-        private val querySelection = "${MediaStore.Audio.Media.IS_MUSIC} <> 0"
+        private const val querySelection = "${MediaStore.Audio.Media.IS_MUSIC} <> 0"
 
         private val querySortOrder: String = arrayOf(
             MediaStore.Audio.Media.TITLE,
@@ -50,42 +49,45 @@ class LocalCatalog @Inject constructor(@ApplicationContext context: Context) {
         if (cursor != null && cursor.moveToFirst()) {
             retVal.ensureCapacity(cursor.count)
 
-            val idx_id: Int = cursor.getColumnIndex(MediaStore.Audio.Media._ID)
-            val idx_title: Int = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
-            val idx_artist: Int = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)
-            val idx_album: Int = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)
-            val idx_dataPath: Int = cursor.getColumnIndex(MediaStore.Audio.Media.DATA)
+            val idxId: Int = cursor.getColumnIndex(MediaStore.Audio.Media._ID)
+            val idxTitle: Int = cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)
+            val idxArtist: Int = cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)
+            val idxAlbum: Int = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)
+            val idxAlbumId: Int = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
+            val idxDataPath: Int = cursor.getColumnIndex(MediaStore.Audio.Media.DATA)
 
             do {
-                val curEntry: SongEntry = SongEntry()
+                val curEntry = SongEntry()
 
-                if (idx_id != -1) {
-                    curEntry.id = cursor.getInt(idx_id)
+                if (idxId != -1) {
+                    curEntry.id = cursor.getLong(idxId)
                 }
 
-                if (idx_title != -1) {
-                    curEntry.title = cursor.getString(idx_title) ?: ""
+                if (idxTitle != -1) {
+                    curEntry.title = cursor.getString(idxTitle) ?: ""
                 }
 
-                if (idx_artist != -1) {
-                    curEntry.artist = cursor.getString(idx_artist) ?: ""
+                if (idxArtist != -1) {
+                    curEntry.artist = cursor.getString(idxArtist) ?: ""
                 }
 
-                if (idx_album != -1) {
-                    curEntry.album = cursor.getString(idx_album) ?: ""
+                if (idxAlbum != -1) {
+                    curEntry.album = cursor.getString(idxAlbum) ?: ""
                 }
 
-                if (idx_dataPath != -1) {
-                    curEntry.dataPath = cursor.getString(idx_dataPath) ?: ""
+                if (idxAlbumId != -1) {
+                    curEntry.albumId = cursor.getLong(idxAlbumId)
+                }
+
+                if (idxDataPath != -1) {
+                    curEntry.dataPath = cursor.getString(idxDataPath) ?: ""
                 }
 
                 retVal.add(curEntry)
             } while(cursor.moveToNext())
         }
 
-        if (cursor != null) {
-            cursor.close()
-        }
+        cursor?.close()
 
         return retVal
     }
@@ -94,31 +96,23 @@ class LocalCatalog @Inject constructor(@ApplicationContext context: Context) {
      * Represents a song entry from the media database
      */
     class SongEntry internal constructor() {
-        private var _id: Int = -1
-        private var _title: String = ""
-        private var _artist: String = ""
-        private var _album: String = ""
-        private var _dataPath: String = ""
+        var id: Long = -1
+            internal set
 
-        var id: Int
-        get() = _id
-        internal set(value: Int) { _id = value}
+        var title: String = ""
+            internal set
 
-        var title: String
-        get() = _title
-        internal set(value: String) { _title = value }
+        var artist: String = ""
+            internal set
 
-        var artist: String
-        get() = _artist
-        internal set(value: String) { _artist = value }
+        var album: String = ""
+            internal set
 
-        var album: String
-        get() = _album
-        internal set(value: String) { _album = value }
+        var albumId: Long = -1
+            internal set
 
-        var dataPath: String
-        get() = _dataPath
-        internal set(value: String) { _dataPath = value }
+        var dataPath: String = ""
+            internal set
     }
 
 }

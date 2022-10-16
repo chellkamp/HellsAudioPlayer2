@@ -1,14 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginTop="3dp"
+    android:layout_marginBottom="3dp"
+    android:background="@drawable/item_gradient">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/artwork"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="@dimen/song_art"
+        android:layout_height="@dimen/song_art"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true" />
+        android:layout_alignParentTop="true"
+        android:background="@drawable/ic_song_default_art"
+        tools:ignore="ImageContrastCheck" />
 
     <TextView
         android:id="@+id/song_title"
@@ -16,6 +22,44 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/artwork"
         android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@id/artwork" />
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@id/artwork"
+        android:ellipsize="end"
+        android:maxLines="1"
+        tools:text="Song Title" />
+
+    <TextView
+        android:id="@+id/song_artist"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/song_title"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@id/artwork"
+        android:ellipsize="end"
+        android:maxLines="1"
+        tools:text="Artist" />
+
+    <TextView
+        android:id="@+id/song_album"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/song_artist"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_toEndOf="@id/artwork"
+        android:ellipsize="end"
+        android:maxLines="1"
+        tools:text="Album" />
+
 
 </RelativeLayout>

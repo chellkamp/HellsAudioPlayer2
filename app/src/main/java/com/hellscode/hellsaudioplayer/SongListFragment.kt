@@ -3,12 +3,12 @@ package com.hellscode.hellsaudioplayer
 import android.Manifest
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hellscode.hellsaudioplayer.catalog.LocalCatalog
 import com.hellscode.util.permission.FragmentPermRequestWrapper
@@ -35,7 +35,8 @@ class SongListFragment: Fragment() {
 
     private var _waitSplash: WaitSplash? = null
 
-    private lateinit var rvList: RecyclerView
+    private lateinit var _rvList: RecyclerView
+    private lateinit var _listAdapter: AllSongsAdapter
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -53,12 +54,17 @@ class SongListFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val v: View = inflater.inflate(R.layout.fragment_song_list, container, false)
-        rvList = v.findViewById(R.id.rv_list)
+        _rvList = v.findViewById(R.id.rv_list)
         return v
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        _listAdapter = AllSongsAdapter(requireContext())
+
+        _rvList.layoutManager = LinearLayoutManager(requireContext())
+        _rvList.adapter = _listAdapter
 
         filePermForLoadReq.requestPermissionIfNotGranted(Manifest.permission.READ_EXTERNAL_STORAGE)
     }
@@ -68,7 +74,6 @@ class SongListFragment: Fragment() {
      * If the result is good, then we proceed with loading.
      */
     private fun canLoadData(isGranted: Boolean?) {
-        Toast.makeText(requireContext(), "Granted: ${isGranted}", Toast.LENGTH_LONG).show()
         if (isGranted == true) {
             // begin data load
             _waitSplash?.show()
@@ -78,9 +83,11 @@ class SongListFragment: Fragment() {
 
                 MainScope().launch {
 
-                    // attach data to recyclerview with adapter
+                    // attach data to recyclerview adapter
+                    _listAdapter.data = data
 
                     _waitSplash?.hide()
+                    Toast.makeText(requireContext(), "Is it safe yet?", Toast.LENGTH_LONG).show()
                 }
             }
 
