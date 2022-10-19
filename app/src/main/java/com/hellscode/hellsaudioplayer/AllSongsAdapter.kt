@@ -25,6 +25,9 @@ class AllSongsAdapter(private val context: Context): RecyclerView.Adapter<AllSon
 
     private var _data: List<LocalCatalog.SongEntry> = emptyList()
 
+    /**
+     * source data
+     */
     var data: List<LocalCatalog.SongEntry>
         get() = _data
         @SuppressLint("NotifyDataSetChanged")
@@ -33,19 +36,35 @@ class AllSongsAdapter(private val context: Context): RecyclerView.Adapter<AllSon
             notifyDataSetChanged()
         }
 
+    /**
+     * Get number of data items
+     */
     override fun getItemCount(): Int = _data.size
 
+    /**
+     * Called whenever it's time to create a new view holder
+     * @param parent container that view should be configured to go into
+     * @param viewType number representing view type to use.  This argument is ignored.
+     * @return created view holder
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val itemView: View = LayoutInflater.from(parent.context).inflate(R.layout.li_song, parent, false)
         return ViewHolder(itemView)
     }
 
+    /**
+     * Called when it's time to bind data for the given position
+     * to a view holder.
+     * @param holder view holder
+     * @param position index of data to bind into holder
+     */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(context, _mmr, data[position])
     }
 
     /**
      * Holds view data for a song entry
+     * @param itemView view to be wrapped
      */
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
@@ -75,6 +94,9 @@ class AllSongsAdapter(private val context: Context): RecyclerView.Adapter<AllSon
 
         /**
          * Bind song data to a view
+         * @param context context
+         * @param mmr retriever to be used when loading thumbnails (version 28 and below)
+         * @param data song data to be bound to this view holder
          */
         fun bind(context: Context, mmr: MediaMetadataRetriever, data: LocalCatalog.SongEntry) {
             _titleView.text = data.title
@@ -89,6 +111,12 @@ class AllSongsAdapter(private val context: Context): RecyclerView.Adapter<AllSon
 
         }
 
+        /**
+         * Retrieves and binds album artwork
+         * for the given music item represented by data
+         * @param context context
+         * @param data song data
+         */
         @RequiresApi(Build.VERSION_CODES.Q)
         private fun bindArtworkV29(context: Context, data: LocalCatalog.SongEntry) {
             val artDimenPx: Int = context.resources.getDimensionPixelSize(R.dimen.song_art)
@@ -102,6 +130,13 @@ class AllSongsAdapter(private val context: Context): RecyclerView.Adapter<AllSon
             _albumArtView.setImageBitmap(b)
         }
 
+        /**
+         * For versions before 29, retrieves and binds album artwork
+         * for the given music item represented by data
+         * @param context context
+         * @param mmr used for thumbnail retrieval
+         * @param data song data
+         */
         private fun bindArtworkOld(context: Context, mmr: MediaMetadataRetriever, data: LocalCatalog.SongEntry) {
             mmr.setDataSource(data.dataPath)
             val bytes: ByteArray? = mmr.embeddedPicture
