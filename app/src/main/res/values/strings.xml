@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">HellsAudioPlayer</string>
+    <string name="category_all_title">All</string>
+    <string name="category_all_description">All songs</string>
 </resources>

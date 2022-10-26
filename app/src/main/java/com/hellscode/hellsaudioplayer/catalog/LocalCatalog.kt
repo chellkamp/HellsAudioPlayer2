@@ -2,7 +2,12 @@ package com.hellscode.hellsaudioplayer.catalog
 
 import android.content.Context
 import android.database.Cursor
+import android.os.Bundle
 import android.provider.MediaStore
+import android.support.v4.media.MediaBrowserCompat
+import android.support.v4.media.MediaDescriptionCompat
+import com.hellscode.hellsaudioplayer.media.SongUtil
+
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -35,8 +40,8 @@ class LocalCatalog @Inject constructor(@ApplicationContext context: Context) {
     /**
      * Get a collection of all songs on this device, ordered by song title.
      */
-    fun allSongs(): ArrayList<SongEntry> {
-        val retVal = ArrayList<SongEntry>()
+    fun allSongs(): ArrayList<MediaBrowserCompat.MediaItem> {
+        val retVal = ArrayList<MediaBrowserCompat.MediaItem>()
 
         val cursor: Cursor? = _context.contentResolver.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -56,34 +61,40 @@ class LocalCatalog @Inject constructor(@ApplicationContext context: Context) {
             val idxAlbumId: Int = cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)
             val idxDataPath: Int = cursor.getColumnIndex(MediaStore.Audio.Media.DATA)
 
+            var id: Long? = null
+            var title: String? = null
+            var artist: String? = null
+            var album: String? = null
+            var albumId: Long? = null
+            var dataPath: String? = null
+
             do {
-                val curEntry = SongEntry()
 
                 if (idxId != -1) {
-                    curEntry.id = cursor.getLong(idxId)
+                    id = cursor.getLong(idxId)
                 }
 
                 if (idxTitle != -1) {
-                    curEntry.title = cursor.getString(idxTitle) ?: ""
+                    title = cursor.getString(idxTitle) ?: ""
                 }
 
                 if (idxArtist != -1) {
-                    curEntry.artist = cursor.getString(idxArtist) ?: ""
+                    artist = cursor.getString(idxArtist) ?: ""
                 }
 
                 if (idxAlbum != -1) {
-                    curEntry.album = cursor.getString(idxAlbum) ?: ""
+                    album = cursor.getString(idxAlbum) ?: ""
                 }
 
                 if (idxAlbumId != -1) {
-                    curEntry.albumId = cursor.getLong(idxAlbumId)
+                    albumId = cursor.getLong(idxAlbumId)
                 }
 
                 if (idxDataPath != -1) {
-                    curEntry.dataPath = cursor.getString(idxDataPath) ?: ""
+                    dataPath = cursor.getString(idxDataPath) ?: ""
                 }
 
-                retVal.add(curEntry)
+                retVal.add(SongUtil.createSongItem(id, title, artist, album, albumId, dataPath))
             } while(cursor.moveToNext())
         }
 
@@ -91,28 +102,4 @@ class LocalCatalog @Inject constructor(@ApplicationContext context: Context) {
 
         return retVal
     }
-
-    /**
-     * Represents a song entry from the media database
-     */
-    class SongEntry internal constructor() {
-        var id: Long = -1
-            internal set
-
-        var title: String = ""
-            internal set
-
-        var artist: String = ""
-            internal set
-
-        var album: String = ""
-            internal set
-
-        var albumId: Long = -1
-            internal set
-
-        var dataPath: String = ""
-            internal set
-    }
-
 }

@@ -3,6 +3,7 @@ package com.hellscode.hellsaudioplayer
 import android.Manifest
 import android.content.Context
 import android.os.Bundle
+import android.support.v4.media.MediaBrowserCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -79,7 +80,7 @@ class SongListFragment: Fragment() {
             _waitSplash?.show()
 
             CoroutineScope(Dispatchers.Default).launch {
-                val data: List<LocalCatalog.SongEntry> = localCatalog.allSongs()
+                val data: List<MediaBrowserCompat.MediaItem> = localCatalog.allSongs()
 
                 MainScope().launch {
 

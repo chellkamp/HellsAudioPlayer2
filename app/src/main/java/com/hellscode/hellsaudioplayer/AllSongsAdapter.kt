@@ -9,6 +9,7 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.support.v4.media.MediaBrowserCompat
 import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
@@ -17,18 +18,18 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.hellscode.hellsaudioplayer.catalog.LocalCatalog
+import com.hellscode.hellsaudioplayer.media.SongUtil
 
 class AllSongsAdapter(private val context: Context): RecyclerView.Adapter<AllSongsAdapter.ViewHolder>() {
 
     private val _mmr: MediaMetadataRetriever = MediaMetadataRetriever()
 
-    private var _data: List<LocalCatalog.SongEntry> = emptyList()
+    private var _data: List<MediaBrowserCompat.MediaItem> = emptyList()
 
     /**
      * source data
      */
-    var data: List<LocalCatalog.SongEntry>
+    var data: List<MediaBrowserCompat.MediaItem>
         get() = _data
         @SuppressLint("NotifyDataSetChanged")
         set(value) {
@@ -98,10 +99,10 @@ class AllSongsAdapter(private val context: Context): RecyclerView.Adapter<AllSon
          * @param mmr retriever to be used when loading thumbnails (version 28 and below)
          * @param data song data to be bound to this view holder
          */
-        fun bind(context: Context, mmr: MediaMetadataRetriever, data: LocalCatalog.SongEntry) {
-            _titleView.text = data.title
-            _artistView.text = data.artist
-            _albumView.text = data.album
+        fun bind(context: Context, mmr: MediaMetadataRetriever, data: MediaBrowserCompat.MediaItem) {
+            _titleView.text = SongUtil.getTitle(data)
+            _artistView.text = SongUtil.getArtist(data)
+            _albumView.text = SongUtil.getAlbum(data)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 bindArtworkV29(context, data)
@@ -118,10 +119,10 @@ class AllSongsAdapter(private val context: Context): RecyclerView.Adapter<AllSon
          * @param data song data
          */
         @RequiresApi(Build.VERSION_CODES.Q)
-        private fun bindArtworkV29(context: Context, data: LocalCatalog.SongEntry) {
+        private fun bindArtworkV29(context: Context, data: MediaBrowserCompat.MediaItem) {
             val artDimenPx: Int = context.resources.getDimensionPixelSize(R.dimen.song_art)
             val albumPath: Uri = ContentUris.withAppendedId(
-                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, data.albumId
+                MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, SongUtil.getAlbumId(data)
             )
             val b: Bitmap = context.contentResolver.loadThumbnail(
                 albumPath, Size(artDimenPx, artDimenPx), null
@@ -137,8 +138,8 @@ class AllSongsAdapter(private val context: Context): RecyclerView.Adapter<AllSon
          * @param mmr used for thumbnail retrieval
          * @param data song data
          */
-        private fun bindArtworkOld(context: Context, mmr: MediaMetadataRetriever, data: LocalCatalog.SongEntry) {
-            mmr.setDataSource(data.dataPath)
+        private fun bindArtworkOld(context: Context, mmr: MediaMetadataRetriever, data: MediaBrowserCompat.MediaItem) {
+            mmr.setDataSource(SongUtil.getDataPath(data)?.path ?: "")
             val bytes: ByteArray? = mmr.embeddedPicture
 
             if (bytes != null) {
